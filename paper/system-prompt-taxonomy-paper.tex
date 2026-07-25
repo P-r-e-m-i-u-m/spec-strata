@@ -1,0 +1,592 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{enumitem}
+\usepackage{caption}
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\title{\textbf{Behavioral Control Through System Prompts:\\
+A Comparative Structural Analysis of Public Governance Artifacts\\
+Across Commercial LLM Deployments}}
+
+\author{Syed Abdul Aman \\
+Independent Researcher \\
+\texttt{amanbaba9404522@gmail.com}}
+
+\date{July 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Large language model providers increasingly publish documents intended to govern
+model behavior at scale, ranging from training-time value specifications to
+runtime authority hierarchies to per-product deployed instructions. Despite
+substantial public interest in these artifacts --- evidenced by prompt-collection
+repositories with tens of thousands of stars and an active empirical literature
+on prompt-extraction attacks \citep{promptleak2026} --- direct comparative content
+analysis of these documents' primary text remains rare. Prior
+literature surveys task-oriented prompting techniques for benchmarking
+(which concerns user-authored prompts, not provider-authored governance),
+studies the security of prompt confidentiality (which concerns extraction,
+not content), or examines system-level instructions as an object of research
+and policy discourse \citep{neumann2026governance} without directly coding
+the primary governance documents themselves. This paper
+introduces a three-part taxonomy of behavioral-control artifacts --- training-time
+constitutions, runtime authority specifications, and deployed inference-time
+system prompts --- and applies a credibility-tiered comparative methodology
+across four major labs (Anthropic, OpenAI, Google DeepMind, xAI) and a
+25-plus-product corpus of coding-agent tools. We find that labs diverge not
+only in the content of behavioral constraints but in which artifact type they
+use to express them at all; that transparency is sometimes reactive
+(incident-driven) rather than proactive; that product category (consumer chat
+versus coding agent) systematically predicts which instruction categories
+dominate a deployed prompt; and, using a publicly verifiable 18-revision
+changelog spanning 23 months, that at least one lab's self-description of its
+governance artifact as a ``living document'' can be independently confirmed
+against dated evidence rather than taken on trust. We argue this taxonomy
+resolves a category error common in informal prompt-comparison work, and we
+outline a research agenda for treating behavioral-control artifacts as
+first-class objects of study in AI governance and NLP.
+\end{abstract}
+
+\noindent\textbf{Keywords:} system prompts, LLM alignment, AI governance,
+prompt engineering, behavioral control, transparency
+
+\section{Introduction}
+
+Every deployed conversational AI system operates under some form of
+provider-authored instruction layer that sits above the user's own input ---
+commonly called a ``system prompt.'' As these systems have moved from research
+demonstrations to consumer and enterprise products, the documents that
+constrain their behavior have grown from short, informal instructions into
+substantial artifacts: Anthropic's constitution for Claude runs to roughly
+23,000 words \citep{anthropic2026constitution}; OpenAI's Model Spec runs to
+128 pages in the revision analyzed here \citep{openai2025modelspec}.\footnote{We
+analyze the 2025-09-12 revision throughout this paper. OpenAI has continued
+to revise the Model Spec since (including further updates through at least
+March 2026); as with all artifacts in this study, we report a dated snapshot
+rather than a currently-synchronized document, consistent with the
+credibility-tiering and snapshot-transparency approach described in
+Section~\ref{sec:methodology}.} At the same time, a large ecosystem of
+public repositories exists purely to collect and share these documents,
+whether officially released or reconstructed through extraction, with the
+single largest such repository exceeding 140,000 stars on GitHub at the time
+of writing \citep{x1xhlol2026repo}.
+
+Despite this level of public attention, the documents themselves have
+rarely been treated as a coherent object of direct comparative content
+analysis. Three adjacent literatures exist. The first is the
+prompt-engineering literature, which develops taxonomies of \emph{task}
+prompts --- the instructions a user or application developer supplies to
+elicit a specific output --- for purposes of benchmarking and technique
+comparison \citep{teler2023,liu2024survey}. The second is the AI security
+literature, which studies system prompts as a \emph{target}: how they can
+be extracted via adversarial querying, and how such leakage can be
+mitigated \citep{promptleak2026,proxyprompt2025}. The third, most closely
+related to this paper, is a contemporaneous governance-studies literature
+exemplified by \citet{neumann2026governance}, which systematically reviews
+how researchers and policymakers \emph{discuss} system-level instructions
+as governance objects, but does not itself perform a direct, coded
+comparison of the documents' primary text across labs. None of these three
+literatures asks the question this paper asks: across labs and product
+categories, what do these documents actually contain, how are they
+structured, and what does the variation reveal about differing approaches
+to AI governance?
+
+This gap matters for at least three reasons. First, from a governance
+perspective, these documents are among the only concrete, inspectable
+artifacts through which the public can observe how a lab operationalizes
+its stated values --- more concrete than a blog post, more current than a
+research paper. Second, from an NLP research perspective, treating
+governance documents as training or evaluation data (as some labs already
+do internally) requires a shared vocabulary for what these documents
+contain, which does not yet exist in the public literature. Third, from a
+practical engineering perspective, developers building on top of these
+models routinely conflate categorically different artifacts --- for
+instance, comparing a leaked \emph{deployed} prompt for one product against
+an official \emph{training-time} document for another --- producing
+comparisons that are not actually commensurable.
+
+\subsection*{Contributions}
+\begin{enumerate}[leftmargin=*]
+  \item We introduce a three-part taxonomy distinguishing training-time
+    constitutions, runtime authority specifications, and deployed
+    inference-time system prompts as categorically distinct artifact types,
+    and show that failing to distinguish them produces invalid comparisons.
+  \item We construct a credibility-tiered comparative dataset spanning
+    four major labs and a broad corpus of coding-agent products, coded
+    along eight functional axes (identity framing, safety/refusal
+    instructions, tool-use governance, tone/persona control, output format
+    constraints, injection countermeasures, recency handling, and length).
+  \item We report empirical findings on cross-lab divergence, including an
+    asymmetry in whether labs publish governance artifacts at all, a case
+    where transparency was reactive rather than proactive, a systematic
+    difference in instruction emphasis between consumer-chat and
+    coding-agent product categories, and --- using a publicly available,
+    dated changelog --- a directly verifiable measurement of publication
+    cadence for one lab's deployed system prompt (18 revisions over 23
+    months), rather than relying on a publisher's self-description of its
+    artifact as a ``living document.''
+  \item We propose a research agenda for treating behavioral-control
+    artifacts as first-class objects of study.
+\end{enumerate}
+
+\section{Related Work}
+
+\subsection{Task-Prompt Taxonomies}
+The dominant strand of prompt-taxonomy research addresses how to structure
+task instructions to maximize model performance on downstream benchmarks.
+The TELeR taxonomy \citep{teler2023} categorizes prompts by turn structure,
+expression style, level of detail, and role, explicitly for the purpose of
+standardizing benchmark reporting. Broader surveys of prompt-engineering
+technique \citep{liu2024survey} catalog methods such as chain-of-thought,
+few-shot exemplification, and retrieval augmentation. A related body of work
+constructs taxonomies of \emph{prompt defects} --- failure modes in
+task-prompt design drawn from software-engineering and NLP venues
+\citep{promptdefects2025}. All of this work treats the prompt as something
+a user or developer constructs to accomplish a task; none of it addresses
+the provider-authored instruction layer that this paper studies.
+
+\subsection{Prompt Security and Extraction}
+A substantial and active literature studies system prompts as
+confidentiality targets. Early work formalized prompt injection and prompt
+leaking as distinct attack classes \citep{perez2022}. Subsequent work has
+measured leakage empirically across large numbers of deployed applications,
+finding leakage rates exceeding 80\% in some large-scale studies
+\citep{promptleak2026}, and has proposed defenses such as proxy substitution
+\citep{proxyprompt2025} and encoding-based hardening
+\citep{encodingdefense2026}. This literature's object of study is the
+\emph{event} of extraction and the \emph{robustness} of the prompt against
+it, not the semantic content of the prompt as a governance artifact. Our
+work is complementary: where security research asks whether a prompt can be
+extracted, we ask what it says once available through legitimate or
+well-established channels, and what patterns exist across many such
+documents.
+
+\subsection{AI Governance Transparency}
+A smaller literature and body of industry practice addresses transparency
+in AI governance more broadly, including model cards, system cards, and
+published behavioral specifications. OpenAI's Model Spec explicitly
+positions itself as a transparency artifact governing the ``chain of
+command'' between the provider, operators (system-prompt authors), and
+users \citep{openai2025modelspec}. Anthropic's constitution is explicitly
+framed as a document written primarily \emph{to} the model itself, optimized
+for precision over public accessibility, with public release framed as a
+secondary transparency benefit \citep{anthropic2026constitution}.
+
+The closest prior work to this paper is a contemporaneous study by
+\citet{neumann2026governance}, published at FAccT 2026, which treats
+system-level instructions as a governance object through a PRISMA-based
+systematic literature review of 287 papers (yielding an eight-category
+typology of the \emph{goals} researchers attribute to such instructions,
+e.g., alignment, stability, auditability) combined with a policy-document
+analysis of two case studies, the US Executive Order 14319 and the EU
+General-Purpose AI Code of Practice. Their central finding --- that
+governance frameworks often assume system-level instructions provide
+stable, predictable behavioral control in ways not consistently supported
+by the technical literature --- is a meta-level claim about the literature
+and policy discourse \emph{surrounding} these artifacts. Their organizing
+axis is the \emph{stakeholder hierarchy} through which instructions are
+issued (a ``prompt stack'' of foundation-model provider, developer/deployer,
+and end user). Our study differs in scope and method rather than
+contradicting theirs: we do not survey what researchers or policymakers
+claim about system-level instructions, but instead directly and
+comparatively code the content of the primary governance documents
+themselves, organized around a taxonomy of \emph{artifact type}
+(training-time, runtime-authority, and deployed) that is orthogonal to
+the stakeholder-hierarchy axis used in their typology. Notably, based on
+the sections and reference list available to us at the time of writing,
+Neumann et al.'s corpus draws on Anthropic's published deployed system
+prompts but does not appear to treat Anthropic's training-time constitution
+as a separately governed artifact type, which is consistent with our
+taxonomy identifying it as a categorically distinct object from the
+runtime and deployed layers their stakeholder-hierarchy framing is best
+suited to describe. We view the two studies as complementary: theirs
+establishes, at the level of the research and policy literature, that the
+premise of prompt-based governance is more contested than commonly
+assumed; ours provides a primary-source comparative account of what the
+documents underlying that premise actually contain.
+
+\section{A Taxonomy of Behavioral-Control Artifacts}
+\label{sec:taxonomy}
+
+Informal comparisons of ``system prompts'' across labs routinely conflate
+three categorically distinct artifacts. We propose the following taxonomy,
+motivated directly by the sources examined in this study.
+
+\begin{description}[itemsep=6pt]
+  \item[Training-time constitutions.] Documents used during model training
+    to shape weights, typically via constitutional-AI-style methods in which
+    the document generates synthetic training signal (example interactions,
+    response rankings, scenario guidance). Anthropic's constitution is the
+    clearest public instance: it is addressed to Claude as its primary
+    audience, is not injected at inference time, and explicitly avoids
+    prescribing rule-like behavior in favor of reasoning the model is
+    expected to internalize \citep{anthropic2026constitution}.
+  \item[Runtime authority specifications.] Documents that govern how a
+    deployed model should arbitrate between instructions from different
+    sources at inference time, without themselves being a single prompt.
+    OpenAI's Model Spec is the clearest instance: it defines a ranked
+    ``principal hierarchy'' (provider, operator, user) and explains how
+    conflicts between levels should resolve, but is not itself the text
+    injected into any single conversation \citep{openai2025modelspec}.
+  \item[Deployed inference-time system prompts.] The specific text actually
+    prepended to a conversation for a given product at a given time. This
+    is the artifact most commonly leaked, extracted, or --- in xAI's case
+    \citep{xaigrokrepo2026} --- proactively published in raw form. It is the
+    most ephemeral of the three, changing frequently with product updates,
+    and the most heterogeneous, since a single lab may maintain dozens of
+    distinct deployed prompts across product surfaces.
+\end{description}
+
+This taxonomy is not merely descriptive bookkeeping. Section~\ref{sec:findings}
+shows that failing to distinguish these types produces comparisons that
+are not commensurable, and that the choice of \emph{which} artifact type a
+lab uses to express a given constraint is itself informative about that
+lab's governance philosophy.
+
+\section{Methodology}
+\label{sec:methodology}
+
+\subsection{Source Tiering}
+Because the corpus necessarily includes documents of varying provenance, each
+entry is tagged with a credibility tier, reported transparently rather than
+treated as uniformly authoritative:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Tier 1 (Official/primary):} Content published directly by the
+    originating lab (e.g., Anthropic's constitution, OpenAI's Model Spec,
+    xAI's raw prompt repository).
+  \item \textbf{Tier 2 (Reconstructed, high-consensus):} Content appearing
+    consistently across independent extraction attempts, hosted in
+    long-running, widely-cited public repositories (e.g., the
+    coding-agent prompt aggregation studied in
+    Section~\ref{sec:coding-agents}).
+  \item \textbf{Tier 3 (Single-source leaks):} Lower-confidence material used
+    only to note the possible existence of a pattern, never as a primary
+    data point.
+\end{itemize}
+
+\subsection{Coding Scheme}
+Each entry in the corpus is coded along eight functional axes: identity
+framing, safety/refusal instructions, tool-use governance, tone/persona
+control, output format constraints, injection/jailbreak countermeasures,
+recency/knowledge-cutoff handling, and document length. This scheme was
+derived inductively from an initial pass over the corpus rather than
+imposed a priori, consistent with standard qualitative coding practice for
+emergent taxonomies \citep{promptdefects2025}.
+
+\subsection{Copyright and Reproduction Policy}
+No system prompt text is reproduced verbatim beyond short quoted fragments
+where exact wording is analytically load-bearing. All classification in
+this paper is performed through structural coding and paraphrase, not
+reproduction, consistent with treating these as evidentiary rather than
+literary objects.
+
+\subsection{Scope and Corpus}
+The comparative corpus (Table~\ref{tab:corpus}) spans four major labs at
+the level of official or near-official governance artifacts, and a
+25-plus-product corpus of coding-agent system prompts aggregated from a
+single long-running, high-consensus Tier-2 source
+\citep{x1xhlol2026repo}, used to characterize product-category-level
+patterns rather than individual product claims.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{2.2cm}p{2.9cm}p{1cm}p{6.2cm}@{}}
+\toprule
+\textbf{Lab} & \textbf{Artifact} & \textbf{Tier} & \textbf{Type (per Sec.~\ref{sec:taxonomy})} \\
+\midrule
+Anthropic & Constitution & 1 & Training-time \\
+Anthropic & \texttt{claude.ai}/mobile system-prompt changelog & 1 & Deployed (versioned, 18 dated revisions, Jul.\ 2024--Jun.\ 2026) \\
+OpenAI & Model Spec & 1 & Runtime authority spec \\
+xAI & \texttt{grok-prompts} repo & 1 & Deployed (multiple, raw) \\
+Google DeepMind & Prompting guides & 3 & None published (developer-facing only) \\
+25+ coding-agent products & Aggregated repo & 2 & Deployed (per-product) \\
+\bottomrule
+\end{tabular}
+\caption{Corpus overview by lab/product category, credibility tier, and
+artifact type. Anthropic is the only lab in the corpus with both a
+training-time and a versioned, longitudinally documented deployed artifact
+publicly available.}
+\label{tab:corpus}
+\end{table}
+
+\section{Findings}
+\label{sec:findings}
+
+\subsection{Labs Diverge in Artifact \emph{Type}, Not Just Content}
+The most basic finding is that labs do not agree on what kind of document
+should perform behavioral governance. Anthropic's primary public artifact is
+a training-time document not injected at runtime. OpenAI's primary public
+artifact is a runtime arbitration framework, not itself a prompt. xAI's
+primary public artifact is the deployed prompts themselves, in raw form,
+with no equivalent training-time or arbitration-framework document made
+public. Google DeepMind has published no artifact in any of the three
+categories that addresses the company's own behavioral constraints on
+Gemini; its public documentation is prompting guidance addressed to
+third-party developers, not a transparency document about Gemini's own
+governance. A naive comparison of ``Anthropic's system prompt vs.\ OpenAI's
+system prompt vs.\ Google's system prompt'' is therefore not comparing four
+instances of the same artifact type, but at best two comparable instances
+and two absences.
+
+\subsection{Convergent Hierarchical Framing, Divergent Justification}
+Despite this divergence in artifact type, Anthropic and OpenAI converge on
+a strikingly similar structural device: an explicit, ranked hierarchy of
+authority. OpenAI's principal hierarchy ranks provider, operator, and user
+instructions, with higher levels overriding lower ones in conflict
+\citep{openai2025modelspec}. Anthropic's constitution specifies a priority
+order of safety, ethics, compliance, and helpfulness. The two labs differ
+sharply, however, in how they justify the hierarchy: OpenAI frames it in
+terms of steerability and developer control, drawing an analogy to
+function definitions and arguments in a programming language, while
+Anthropic explicitly frames its equivalent structure in terms of reasoning
+the model should internalize rather than rules to mechanically apply,
+and explicitly states a preference for reason-based over rule-based
+specification on the grounds that rule lists do not generalize to novel
+situations. This is a substantive difference in governance philosophy
+expressed through a superficially similar structural device, and would be
+invisible to an analysis that only asked ``does the document specify a
+hierarchy?'' without examining the justificatory framing.
+
+\subsection{Transparency Can Be Reactive, Not Only Proactive}
+xAI's decision to publish Grok's raw system prompts is frequently described
+in press coverage as a transparency initiative comparable to Anthropic's.
+The provenance differs materially: xAI's public commitment to publish
+prompts was announced as a direct response to a May 2025 incident in which
+an unauthorized internal modification caused the Grok bot on the X platform
+to produce off-topic, ideologically directed outputs \citep{xaiincident2025}.
+Publication was explicitly framed as a trust-repair mechanism and paired
+with a commitment to additional internal review controls, rather than
+introduced as a proactive philosophical stance of the kind that
+characterizes Anthropic's or OpenAI's framing. This suggests that
+``publishes its system prompts'' is not a single governance stance but a
+category that includes both prospective transparency-as-values and
+reactive transparency-as-incident-response, with potentially different
+implications for how much a given publication should be trusted as
+representative of typical behavior going forward. Consistent with this, at
+least one public issue thread on xAI's repository documents a case where a
+prompt reportedly shared directly by the model in conversation was not
+subsequently found in the public repository, raising unresolved questions
+about repository completeness that this paper does not attempt to
+adjudicate but flags as a limitation of Tier-1 status not implying
+completeness.
+
+\subsection{Substantive, Not Just Structural, Divergence}
+Labs also diverge in the actual content of behavioral constraints in ways
+that reflect differing product positioning rather than differing
+communication style. xAI's published safety-prefix file for its
+consumer-facing model states that no additional content restrictions apply
+to fictional adult sexual content involving dark or violent themes unless
+specified elsewhere, and separately instructs the model to treat users as
+adults and avoid moralizing about ``edgy'' requests, with these
+instructions marked as taking the highest priority over other
+instructions \citep{xaigrokrepo2026}. This is a substantively more
+permissive default stance on mature fictional content than is publicly
+documented for the other labs in this corpus, while the same published
+material maintains a narrower, explicitly named restriction on content
+involving minors. The combination --- broad default permissiveness paired
+with one hard, explicitly carved-out exception --- appears to be a
+deliberate product-differentiation choice rather than an oversight, and
+is stated plainly enough in the primary source that it requires no
+inference on our part.
+
+\subsection{Product Category Predicts Instruction Emphasis}
+\label{sec:coding-agents}
+Coding-agent products (Cursor, Claude Code, GitHub Copilot, Devin, and
+over twenty others aggregated in a single high-consensus Tier-2 source)
+show a systematic pattern distinct from consumer chat assistants: heavy
+emphasis on tool-orchestration governance (sequencing of tool calls,
+confirmation requirements before destructive file operations, diff-format
+output conventions) and comparatively light emphasis on general
+content-safety framing. We interpret this as consistent with the
+three-artifact taxonomy in Section~\ref{sec:taxonomy}: where the underlying
+base model already carries general safety behavior from a training-time
+layer (a constitution or equivalent), the deployed, product-specific
+system prompt's marginal job is to govern what is specific to that
+product's task domain, not to re-specify general safety behavior the base
+model already encodes. This is consistent with, though not proof of, a
+layered division of governance labor across the three artifact types.
+
+\subsection{Publication Cadence Reveals Living-Document Status Empirically, Not Just Rhetorically}
+\label{sec:cadence}
+Both the Anthropic constitution and the OpenAI Model Spec describe themselves in their own text as living documents subject to revision. Anthropic is the only lab in this corpus for which that claim can be verified against a public, dated record rather than taken on the publisher's word: its deployed \texttt{claude.ai}/mobile system-prompt changelog lists 18 distinct dated revision events across roughly 23 months (July 2024 to June 2026), a mean interval of approximately 41 days, or under six weeks, between documented changes \citep{anthropic2026sysprompts}. The changelog further states explicitly that these updates do not propagate to the API, confirming --- independent of any inference on our part --- that the deployed prompt is a product-surface-specific artifact rather than a single canonical text shared across all of a lab's surfaces, consistent with the taxonomy in Section~\ref{sec:taxonomy}. No equivalent longitudinal record is publicly available for OpenAI, Google DeepMind, or xAI at the time of writing, which limits comparison of update cadence across labs to this single case; we report it not as a cross-lab comparison but as an existence proof that at least one lab's ``living document'' framing is independently verifiable rather than solely rhetorical, and as a template for what verifiable transparency could look like elsewhere in the corpus.
+
+\section{Discussion}
+
+The findings above suggest two things. First, treating ``system prompt
+comparison'' as a well-posed question requires first answering \emph{which
+artifact type} is being compared, and being explicit when a comparison
+spans types (e.g., a leaked deployed prompt against an official
+training-time document) rather than presenting it as apples-to-apples.
+Second, the variation observed across labs is not merely stylistic. The
+choice of artifact type, the decision whether to publish anything at all,
+and the circumstances under which publication occurs (proactive versus
+incident-driven) are themselves meaningful data about a lab's governance
+posture and should be treated as such by researchers and by the broader
+public discourse that currently tends to flatten ``does lab X publish its
+prompts'' into a single binary marker of trustworthiness.
+
+\subsection{Implications for Practitioners}
+Developers building on top of multiple providers' APIs, including within
+agentic systems that call more than one model, should be aware that the
+``safety behavior'' of a product is not uniformly encoded at the same
+layer across providers, and that a system prompt inherited from one
+product's convention (e.g., a coding-agent's typically light safety
+framing) should not be assumed portable to a different deployment context
+without re-examining what layer is expected to carry that responsibility.
+
+\subsection{Implications for Researchers}
+We suggest that behavioral-control artifacts be treated as a legitimate,
+citable object of NLP and AI-governance research in their own right, with
+the credibility-tiering approach used here as one candidate methodological
+norm for handling the mix of official and reconstructed material that
+necessarily characterizes this domain until more labs adopt full proactive
+publication.
+
+\section{Limitations}
+
+This study has several limitations that should inform how its findings are
+weighted. First, the corpus is not exhaustive: it covers four major labs
+in depth and one aggregated coding-agent source, not the full space of
+deployed LLM products. Second, Tier-2 and Tier-3 material, by construction,
+carries lower evidentiary weight than Tier-1 material, and conclusions
+drawn substantially from Tier-2 sources (notably the coding-agent
+product-category finding in Section~\ref{sec:coding-agents}) should be
+read as suggestive pending independent replication against official
+sources where labs choose to publish them. Third, most artifacts studied
+here are single or few-point snapshots rather than longitudinal series;
+the constitution and Model Spec documents are both explicitly described
+by their publishers as living documents subject to revision, but only
+Anthropic's deployed-prompt changelog (Section~\ref{sec:cadence}) provides public,
+dated, longitudinal evidence of that revision in practice. Findings about
+relative emphasis or structure for OpenAI, Google DeepMind, and xAI may
+therefore not hold at a later snapshot, and we have no public basis for
+estimating how quickly they would change if they did. Fourth, the coding
+scheme, while derived inductively from the corpus, was applied by a single
+coder; inter-rater reliability was not assessed and would strengthen
+future iterations of this work. Fifth, the interpretive claim in
+Section~\ref{sec:coding-agents} that base-model training absorbs general
+safety behavior while deployed prompts absorb task-specific governance is
+consistent with the observed pattern but was not tested against a
+condition that could falsify it (e.g., a coding agent built on a base
+model with no equivalent training-time safety layer); we present it as
+the most parsimonious explanation available from public evidence, not as
+a demonstrated causal mechanism.
+
+\section{Conclusion and Future Work}
+
+Behavioral-control documents governing large language models have grown
+from informal instructions into substantial public artifacts, yet direct
+comparative content analysis of their primary text --- as distinct from
+literature and policy review of how such documents are discussed
+\citep{neumann2026governance} --- has remained rare. We
+introduced a three-part taxonomy distinguishing training-time
+constitutions, runtime authority specifications, and deployed
+inference-time system prompts, and showed that this distinction resolves
+otherwise incommensurable comparisons across labs. Applying a
+credibility-tiered methodology across four major labs and a broad
+coding-agent product corpus, we found that labs diverge in which artifact
+type they use at all, that transparency can be reactive rather than
+proactive, that content divergence reflects genuine product-positioning
+choices rather than only communication style, that product category
+systematically predicts which instruction categories a deployed prompt
+emphasizes, and that at least one lab's claim to maintain a living
+governance document is independently verifiable against a public,
+dated record rather than resting on the publisher's word alone.
+
+Future work should extend the corpus to additional labs and product
+categories as more official material becomes available, assess inter-rater
+reliability on the coding scheme, and track these artifacts longitudinally
+given their explicitly living-document status, which would allow the
+field to study not just cross-sectional divergence but the trajectory of
+behavioral-control design over time.
+
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem[Anthropic(2026a)]{anthropic2026constitution}
+Anthropic. \emph{Claude's Constitution}. January 2026.
+\url{https://www.anthropic.com/constitution}
+
+\bibitem[Anthropic(2026b)]{anthropic2026sysprompts}
+Anthropic. \emph{System Prompts} [release-notes documentation, versioned
+changelog of the deployed claude.ai/mobile system prompt, dated entries
+from July 2024 through June 2026]. Accessed July 2026.
+\url{https://docs.claude.com/en/release-notes/system-prompts}
+
+\bibitem[Neumann et al.(2026)]{neumann2026governance}
+A.~Neumann, H.~Sargeant, and J.~Singh. Prompt Governance? On Governing
+Technologies Governed by Natural Language. \emph{arXiv:2606.07539}, 2026.
+Also published in \emph{Proceedings of the 2026 ACM Conference on
+Fairness, Accountability, and Transparency} (FAccT '26), pp.\ 1--44.
+\url{https://doi.org/10.1145/3805689.3806763}
+
+\bibitem[OpenAI(2025)]{openai2025modelspec}
+OpenAI. \emph{The OpenAI Model Spec} (2025-09-12 revision). September 2025.
+\url{https://model-spec.openai.com/2025-09-12.html}
+
+\bibitem[Valbuena(2026)]{x1xhlol2026repo}
+L.~Valbuena (x1xhlol). \emph{system-prompts-and-models-of-ai-tools}
+[GitHub repository, aggregating reconstructed system prompts for 25+
+coding-agent products; 141k+ stars, 501 commits at time of access].
+Accessed July 2026.
+\url{https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools}
+
+\bibitem[xAI(2026)]{xaigrokrepo2026}
+xAI. \emph{grok-prompts} [GitHub repository, official raw system prompts
+for Grok across chat, X-bot, and API deployment surfaces]. Accessed July 2026.
+\url{https://github.com/xai-org/grok-prompts}
+
+\bibitem[xAI(2025)]{xaiincident2025}
+xAI. Statement on unauthorized modification to the Grok response bot on X.
+Posted to X, May 15, 2025.
+\url{https://x.com/xai/status/1923183620606619649}
+
+\bibitem[Karmaker Santu and Feng(2023)]{teler2023}
+S.~K. Karmaker Santu and D.~Feng. TELeR: A General Taxonomy of LLM Prompts
+for Benchmarking Complex Tasks. \emph{arXiv:2305.11430}. Accepted to
+Findings of EMNLP 2023.
+
+\bibitem[Sahoo et al.(2024)]{liu2024survey}
+P.~Sahoo, A.~K. Singh, S.~Saha, V.~Jain, S.~Mondal, and A.~Chadha.
+A Systematic Survey of Prompt Engineering in Large Language Models:
+Techniques and Applications. \emph{arXiv:2402.07927}, 2024.
+
+\bibitem[Tian et al.(2025)]{promptdefects2025}
+H.~Tian, C.~Wang, B.~Yang, L.~Zhang, and Y.~Liu. A Taxonomy of Prompt
+Defects in LLM Systems. \emph{arXiv:2509.14404}, 2025.
+
+\bibitem[Perez and Ribeiro(2022)]{perez2022}
+F.~Perez and I.~Ribeiro. Ignore Previous Prompt: Attack Techniques For
+Language Models. \emph{arXiv:2211.09527}, 2022. Presented at the NeurIPS
+2022 ML Safety Workshop.
+
+\bibitem[Yang et al.(2026)]{promptleak2026}
+Y.~Yang, C.~Fu, T.~Zhang, R.~Zeng, Q.~Li, T.~Du, Z.~Wang, S.~Ji, and
+W.~Chen. Understanding and Mitigating Prompt Leaking Attacks in
+Real-World LLM-Based Applications. \emph{arXiv:2606.18673}, 2026.
+
+\bibitem[Zhuang et al.(2025)]{proxyprompt2025}
+Z.~Zhuang, M.-I. Nicolae, H.-P. Wang, and M.~Fritz. ProxyPrompt: Securing
+System Prompts against Prompt Extraction Attacks. \emph{arXiv:2505.11459}, 2025.
+
+\bibitem[Sahu et al.(2026)]{encodingdefense2026}
+A.~Sahu, D.~Samanta, and R.~Soosahabi. Automated Framework to Evaluate
+and Harden LLM System Instructions against Encoding Attacks.
+\emph{arXiv:2604.01039}, 2026.
+
+\end{thebibliography}
+
+\end{document}
