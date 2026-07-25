@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Behavioral Control Through System Prompts: A Comparative Structural Analysis of Public Governance Artifacts Across Commercial LLM Deployments"
+authors:
+  - family-names: Aman
+    given-names: "Syed Abdul"
+    email: amanbaba9404522@gmail.com
+date-released: 2026-07-25
+url: "https://github.com/P-r-e-m-i-u-m/spec-strata"
+repository-code: "https://github.com/P-r-e-m-i-u-m/spec-strata"
+license: MIT
+keywords:
+  - large-language-models
+  - system-prompts
+  - ai-safety
+  - ai-governance
+  - taxonomy
+  - prompt-engineering
