@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>spec-strata — A taxonomy of LLM governance artifacts</title>
 <meta name="description" content="A comparative structural taxonomy of the documents that govern LLM behavior — training-time constitutions, runtime authority specs, and deployed system prompts.">
+
+<!-- Open Graph / Twitter Card -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="spec-strata — A taxonomy of LLM governance artifacts">
+<meta property="og:description" content="A comparative structural taxonomy of the documents that govern LLM behavior — training-time constitutions, runtime authority specs, and deployed system prompts.">
+<meta property="og:url" content="https://p-r-e-m-i-u-m.github.io/spec-strata/">
+<meta property="og:image" content="https://p-r-e-m-i-u-m.github.io/spec-strata/social-preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="spec-strata — A taxonomy of LLM governance artifacts">
+<meta name="twitter:description" content="A comparative structural taxonomy of the documents that govern LLM behavior across Anthropic, OpenAI, Google, and xAI.">
+<meta name="twitter:image" content="https://p-r-e-m-i-u-m.github.io/spec-strata/social-preview.png">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -133,6 +148,21 @@
   .status-item{font-family:var(--mono); font-size:13px; color:var(--ink-soft);}
   .status-item strong{color:var(--ink); display:block; font-family:var(--display); font-size:15px; font-weight:600; margin-bottom:2px;}
 
+  .table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:6px;}
+  table{width:100%; border-collapse:collapse; font-size:14.5px;}
+  th{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:0.05em; text-transform:uppercase;
+    text-align:left; color:var(--ink-soft); background:var(--bg-raised);
+    padding:12px 16px; border-bottom:1px solid var(--line); white-space:nowrap;
+  }
+  td{padding:14px 16px; border-bottom:1px solid var(--line); vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  .lab-table td:first-child{font-family:var(--display); font-weight:600; font-size:15px; white-space:nowrap;}
+  .lab-dot{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:9px;}
+  .data-table{font-family:var(--mono); font-size:13px;}
+  .table-note{font-family:var(--mono); font-size:13px; color:var(--ink-soft); margin-top:14px;}
+  .table-note a{color:var(--tier2); text-decoration:underline; text-underline-offset:3px;}
+
   footer{
     border-top:1px solid var(--line); padding:36px 0 56px; margin-top:20px;
     font-family:var(--mono); font-size:13px; color:var(--ink-soft);
@@ -226,6 +256,138 @@
         <div class="num">05</div>
         <h3>"Living document" claims are sometimes verifiable</h3>
         <p>Anthropic's deployed system prompt has a public, dated changelog: 18 revisions over ~23 months — an existence proof, not just rhetoric.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="eyebrow">Cross-lab comparison</span>
+      <h2>Four labs, four different artifact types</h2>
+    </div>
+    <div class="table-wrap">
+      <table class="lab-table">
+        <thead>
+          <tr>
+            <th>Lab</th>
+            <th>Primary public artifact</th>
+            <th>Tier</th>
+            <th>Transparency posture</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="lab-dot" style="background:var(--tier1)"></span>Anthropic</td>
+            <td>Constitution + dated system-prompt changelog</td>
+            <td>1 &amp; 3</td>
+            <td>Proactive — philosophical framing, publicly versioned</td>
+          </tr>
+          <tr>
+            <td><span class="lab-dot" style="background:var(--tier2)"></span>OpenAI</td>
+            <td>Model Spec (128pp, root&gt;system&gt;developer&gt;user)</td>
+            <td>2</td>
+            <td>Proactive — steerability / developer-control framing</td>
+          </tr>
+          <tr>
+            <td><span class="lab-dot" style="background:#8a8677"></span>Google DeepMind</td>
+            <td>None — only developer prompting guidance (PTCF)</td>
+            <td>—</td>
+            <td>No governance-transparency artifact published</td>
+          </tr>
+          <tr>
+            <td><span class="lab-dot" style="background:var(--tier3)"></span>xAI</td>
+            <td>Raw deployed prompts on GitHub (per-surface)</td>
+            <td>3</td>
+            <td>Reactive — triggered by a 2025 incident, trust-repair framing</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="eyebrow">Corpus</span>
+      <h2>A look at the coded dataset</h2>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>entity</th>
+            <th>product</th>
+            <th>tier</th>
+            <th>source_type</th>
+            <th>safety_refusal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>OpenAI</td>
+            <td>Model Spec</td>
+            <td>1</td>
+            <td>official public spec (CC0)</td>
+            <td>explicit root-level prohibitions</td>
+          </tr>
+          <tr>
+            <td>Anthropic</td>
+            <td>Claude (mainline)</td>
+            <td>1</td>
+            <td>official training-time constitution</td>
+            <td>reasoning-based, priority order</td>
+          </tr>
+          <tr>
+            <td>Anthropic</td>
+            <td>claude.ai deployed prompt</td>
+            <td>1</td>
+            <td>official versioned changelog</td>
+            <td>category-specific operational rules</td>
+          </tr>
+          <tr>
+            <td>xAI</td>
+            <td>Grok (all contexts)</td>
+            <td>1</td>
+            <td>official raw prompts on GitHub</td>
+            <td>minimal, minors-content only</td>
+          </tr>
+          <tr>
+            <td>Coding-agent aggregate</td>
+            <td>25+ products</td>
+            <td>2</td>
+            <td>long-running aggregation repo (141k★)</td>
+            <td>varies, generally lighter</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-note">6 rows × 13 coding axes in the full corpus — <a href="data/dataset.csv">download dataset.csv</a> for the complete table.</p>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="eyebrow">Open questions</span>
+      <h2>What this study doesn't answer yet</h2>
+    </div>
+    <div class="findings">
+      <div class="finding">
+        <div class="num">→</div>
+        <h3>Inter-rater reliability</h3>
+        <p>Coding was single-coder. A second independent coder scoring the same corpus is the most direct way to strengthen every claim in this paper.</p>
+      </div>
+      <div class="finding">
+        <div class="num">→</div>
+        <h3>Longitudinal data for other labs</h3>
+        <p>Anthropic is the only lab with verifiable dated revision history. Whether OpenAI, Google, and xAI's documents are similarly "living" is currently unknown, not disputed.</p>
+      </div>
+      <div class="finding">
+        <div class="num">→</div>
+        <h3>Causal claim on coding agents</h3>
+        <p>The pattern — coding agents de-emphasize safety framing because it lives at the training layer — is an interpretation consistent with the data, not a tested causal mechanism.</p>
+      </div>
+      <div class="finding">
+        <div class="num">→</div>
+        <h3>Google's silence, unexplained</h3>
+        <p>Whether Google's lack of a public governance artifact reflects a deliberate policy choice or simply a different publication strategy is outside what this corpus can determine.</p>
       </div>
     </div>
   </section>
