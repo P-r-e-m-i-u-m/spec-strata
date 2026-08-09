@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://p-r-e-m-i-u-m.github.io/spec-strata/sitemap.xml
