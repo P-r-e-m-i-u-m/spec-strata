@@ -1,0 +1,22 @@
+{
+  "title": "spec-strata: Behavioral Control Through System Prompts — A Comparative Structural Analysis of Public Governance Artifacts Across Commercial LLM Deployments",
+  "description": "A three-part taxonomy of behavioral-control artifacts governing LLM behavior — training-time constitutions, runtime authority specifications, and deployed system prompts — with a credibility-tiered comparative analysis across Anthropic, OpenAI, Google DeepMind, and xAI.",
+  "creators": [
+    {
+      "name": "Aman, Syed Abdul",
+      "affiliation": "Independent Researcher"
+    }
+  ],
+  "keywords": [
+    "large language models",
+    "system prompts",
+    "AI governance",
+    "AI safety",
+    "taxonomy",
+    "prompt engineering"
+  ],
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "access_right": "open",
+  "license": "MIT"
+}

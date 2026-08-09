@@ -8,6 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-arXiv--ready-brightgreen)](docs/publication-readiness-report.md)
 [![Paper](https://img.shields.io/badge/paper-PDF-red)](paper/system-prompt-taxonomy-paper.pdf)
+[![DOI](https://img.shields.io/badge/DOI-pending-lightgrey)](docs/zenodo-orcid-guide.md)
 
 **[→ Live site](https://p-r-e-m-i-u-m.github.io/spec-strata/)**
 
