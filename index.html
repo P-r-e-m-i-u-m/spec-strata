@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>spec-strata — A taxonomy of LLM governance artifacts</title>
-<meta name="description" content="A comparative structural taxonomy of the documents that govern LLM behavior — training-time constitutions, runtime authority specs, and deployed system prompts.">
+<title>spec-strata: three kinds of system prompt</title>
+<meta name="description" content="AI labs publish three different kinds of documents about how their models should behave. Comparing them head to head goes wrong. A paper, a dataset and notes.">
 
 <!-- Open Graph / Twitter Card -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="spec-strata — A taxonomy of LLM governance artifacts">
-<meta property="og:description" content="A comparative structural taxonomy of the documents that govern LLM behavior — training-time constitutions, runtime authority specs, and deployed system prompts.">
+<meta property="og:title" content="spec-strata: three kinds of system prompt">
+<meta property="og:description" content="AI labs publish three different kinds of documents about how their models should behave. Comparing them head to head goes wrong.">
 <meta property="og:url" content="https://p-r-e-m-i-u-m.github.io/spec-strata/">
 <meta property="og:image" content="https://p-r-e-m-i-u-m.github.io/spec-strata/social-preview.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="spec-strata — A taxonomy of LLM governance artifacts">
-<meta name="twitter:description" content="A comparative structural taxonomy of the documents that govern LLM behavior across Anthropic, OpenAI, Google, and xAI.">
+<meta name="twitter:title" content="spec-strata: three kinds of system prompt">
+<meta name="twitter:description" content="What Anthropic, OpenAI, Google DeepMind and xAI publish about model behavior, sorted into three layers.">
 <meta name="twitter:image" content="https://p-r-e-m-i-u-m.github.io/spec-strata/social-preview.png">
 
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -31,11 +31,8 @@
     --ink-soft: #4B5058;
     --line: #D9D3C4;
     --tier1: #2B3A67;
-    --tier1-soft: #2B3A6714;
     --tier2: #2F6E6B;
-    --tier2-soft: #2F6E6B14;
     --tier3: #A8531F;
-    --tier3-soft: #A8531F14;
     --display: 'Fraunces', serif;
     --body: 'IBM Plex Sans', sans-serif;
     --mono: 'IBM Plex Mono', monospace;
@@ -89,10 +86,10 @@
   .btn-ghost{color:var(--ink); border-color:var(--line);}
   .btn-ghost:hover{border-color:var(--ink);}
 
-  /* STRATA DIAGRAM (signature element) */
+  /* STRATA DIAGRAM */
   .strata{
     position:relative; height:420px; border-radius:6px; overflow:hidden;
-    border:1px solid var(--line); box-shadow:0 1px 0 rgba(0,0,0,0.02);
+    border:1px solid var(--line);
   }
   .band{
     position:relative; display:flex; flex-direction:column; justify-content:center;
@@ -108,11 +105,8 @@
     position:absolute; inset:0; pointer-events:none; opacity:0.09;
     background-image:repeating-linear-gradient(178deg, transparent, transparent 7px, #fff 7px, #fff 8px);
   }
-  .core-tick{
-    position:absolute; left:-1px; width:6px; height:1px; background:var(--ink-soft); opacity:0.4;
-  }
 
-  /* SECTION HEADERS */
+  /* SECTIONS */
   .section{padding:64px 0; border-top:1px solid var(--line);}
   .section-head{margin-bottom:36px;}
   .section-head .eyebrow{
@@ -123,16 +117,16 @@
 
   /* FINDINGS */
   .findings{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line);}
-  .finding{background:var(--bg); padding:28px; }
+  .finding{background:var(--bg); padding:28px;}
   .finding .num{font-family:var(--mono); font-size:12px; color:var(--tier2); margin-bottom:10px;}
   .finding h3{font-family:var(--display); font-weight:600; font-size:18px; margin-bottom:10px; line-height:1.3;}
   .finding p{color:var(--ink-soft); font-size:15px;}
 
-  /* STRUCTURE */
+  /* FILE TREE */
   .filetree{
     font-family:var(--mono); font-size:14px; background:var(--bg-raised);
     border:1px solid var(--line); border-radius:6px; padding:26px 30px; line-height:1.9;
-    color:var(--ink-soft); overflow-x:auto;
+    color:var(--ink-soft); overflow-x:auto; white-space:pre;
   }
   .filetree .dir{color:var(--tier1); font-weight:500;}
   .filetree .comment{color:var(--ink-soft); opacity:0.65;}
@@ -140,14 +134,15 @@
   /* CITATION */
   .cite-box{
     font-family:var(--mono); font-size:13.5px; background:var(--ink); color:#E9E6DD;
-    border-radius:6px; padding:26px 30px; overflow-x:auto; line-height:1.7;
+    border-radius:6px; padding:26px 30px; overflow-x:auto; line-height:1.7; white-space:pre;
   }
 
-  /* STATUS STRIP */
+  /* STATUS */
   .status-strip{display:flex; gap:36px; flex-wrap:wrap; margin-top:8px;}
-  .status-item{font-family:var(--mono); font-size:13px; color:var(--ink-soft);}
-  .status-item strong{color:var(--ink); display:block; font-family:var(--display); font-size:15px; font-weight:600; margin-bottom:2px;}
+  .status-item{font-family:var(--mono); font-size:13px; color:var(--ink-soft); max-width:22ch;}
+  .status-item strong{color:var(--ink); display:block; font-family:var(--display); font-size:26px; font-weight:600; margin-bottom:2px;}
 
+  /* TABLES */
   .table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:6px;}
   table{width:100%; border-collapse:collapse; font-size:14.5px;}
   th{
@@ -160,7 +155,7 @@
   .lab-table td:first-child{font-family:var(--display); font-weight:600; font-size:15px; white-space:nowrap;}
   .lab-dot{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:9px;}
   .data-table{font-family:var(--mono); font-size:13px;}
-  .table-note{font-family:var(--mono); font-size:13px; color:var(--ink-soft); margin-top:14px;}
+  .table-note{font-family:var(--mono); font-size:13px; color:var(--ink-soft); margin-top:14px; max-width:80ch;}
   .table-note a{color:var(--tier2); text-decoration:underline; text-underline-offset:3px;}
 
   footer{
@@ -184,9 +179,9 @@
 <nav>
   <div class="brand">spec·strata</div>
   <div class="links">
-    <a href="#findings">Findings</a>
+    <a href="#findings">What I found</a>
     <a href="paper/">Paper</a>
-    <a href="data/dataset.csv">Dataset</a>
+    <a href="data/dataset.csv">Data</a>
     <a href="https://github.com/P-r-e-m-i-u-m/spec-strata">GitHub</a>
   </div>
 </nav>
@@ -196,119 +191,120 @@
   <section class="hero">
     <div class="hero-copy">
       <span class="eyebrow">Independent research · 2026</span>
-      <h1>LLMs are governed in <em>layers</em>. Most comparisons ignore that.</h1>
-      <p>A credibility-tiered comparative study of the documents that control model behavior — training-time constitutions, runtime authority specs, and deployed system prompts — across Anthropic, OpenAI, Google, and xAI.</p>
+      <h1>Three kinds of system prompt, and most comparisons <em>mix them up</em>.</h1>
+      <p>I read what Anthropic, OpenAI, Google DeepMind and xAI have published about how their models should behave, sorted it into three layers, and graded how far each source can be trusted. The paper, the data and my notes are all here.</p>
       <div class="cta-row">
         <a class="btn btn-solid" href="paper/">Read the paper →</a>
         <a class="btn btn-ghost" href="https://github.com/P-r-e-m-i-u-m/spec-strata">View on GitHub</a>
       </div>
     </div>
 
-    <div class="strata" aria-label="Diagram of the three-tier governance taxonomy">
+    <div class="strata" aria-label="The three layers: training time, runtime rulebook, deployed prompt">
       <div class="band band-1">
         <div class="striation"></div>
-        <span class="tier-label">Tier 1 · deepest</span>
-        <div class="tier-title">Training-time Constitution</div>
-        <span class="tier-ex">e.g. Anthropic's Constitution</span>
+        <span class="tier-label">Layer 1 · training time</span>
+        <div class="tier-title">The constitution</div>
+        <span class="tier-ex">Anthropic's constitution</span>
       </div>
       <div class="band band-2">
         <div class="striation"></div>
-        <span class="tier-label">Tier 2 · middle</span>
-        <div class="tier-title">Runtime Authority Spec</div>
-        <span class="tier-ex">e.g. OpenAI's Model Spec</span>
+        <span class="tier-label">Layer 2 · runtime</span>
+        <div class="tier-title">The conflict rules</div>
+        <span class="tier-ex">OpenAI's Model Spec</span>
       </div>
       <div class="band band-3">
         <div class="striation"></div>
-        <span class="tier-label">Tier 3 · surface</span>
-        <div class="tier-title">Deployed System Prompt</div>
-        <span class="tier-ex">e.g. Grok's public prompts</span>
+        <span class="tier-label">Layer 3 · deployed</span>
+        <div class="tier-title">The prompt itself</div>
+        <span class="tier-ex">Grok's public prompts</span>
       </div>
     </div>
   </section>
 
   <section class="section" id="findings">
     <div class="section-head">
-      <span class="eyebrow">What the data shows</span>
-      <h2>Five findings from coding the corpus</h2>
+      <span class="eyebrow">What I found</span>
+      <h2>Five things that stood out</h2>
     </div>
     <div class="findings">
       <div class="finding">
         <div class="num">01</div>
-        <h3>Labs diverge in artifact type, not just content</h3>
-        <p>Anthropic's primary artifact sits at Tier 1, OpenAI's at Tier 2, xAI's at Tier 3 — and Google has published none. Most "prompt comparisons" compare different kinds of documents without saying so.</p>
+        <h3>Labs publish different kinds of document</h3>
+        <p>Anthropic's main public document is a training-time one. OpenAI's is a runtime rulebook. xAI publishes the deployed prompts. Google DeepMind hasn't published anything about Gemini's own rules. A "Lab A vs Lab B" comparison often lines up two real things and two gaps.</p>
       </div>
       <div class="finding">
         <div class="num">02</div>
-        <h3>Convergent structure, divergent philosophy</h3>
-        <p>Anthropic and OpenAI both use a ranked authority hierarchy — but justify it completely differently: developer steerability vs. reasoning the model should internalize.</p>
+        <h3>Same structure, different reasons</h3>
+        <p>Anthropic and OpenAI both rank whose instructions come first. OpenAI frames that as developer control. Anthropic frames it as judgment the model should absorb, and says it would rather explain than hand over a rule list.</p>
       </div>
       <div class="finding">
         <div class="num">03</div>
-        <h3>Transparency can be reactive, not proactive</h3>
-        <p>xAI's prompt-publishing commitment followed a 2025 incident — a different category from Anthropic's and OpenAI's proactive framing, with different implications for trust.</p>
+        <h3>Transparency can be a reaction</h3>
+        <p>xAI committed to publishing Grok's prompts after a May 2025 incident, as a way to rebuild trust. That's a different story from publishing on principle, and it may deserve a different level of trust.</p>
       </div>
       <div class="finding">
         <div class="num">04</div>
-        <h3>Product category predicts instruction emphasis</h3>
-        <p>Coding-agent products emphasize tool-orchestration governance over content-safety — consistent with safety already living in a training-time layer.</p>
+        <h3>Product type shapes the prompt</h3>
+        <p>Coding agents lean on tool rules (what to call, when to confirm, how to format diffs) and say comparatively little about content safety. My reading is that safety already lives in the model. That's an interpretation I haven't tested.</p>
       </div>
       <div class="finding">
         <div class="num">05</div>
-        <h3>"Living document" claims are sometimes verifiable</h3>
-        <p>Anthropic's deployed system prompt has a public, dated changelog: 18 revisions over ~23 months — an existence proof, not just rhetoric.</p>
+        <h3>"Living document" can be checked, at least once</h3>
+        <p>Anthropic keeps a dated changelog for its claude.ai prompt: 18 revisions in about 23 months, roughly one every six weeks. For the other labs there's nothing to check against.</p>
       </div>
     </div>
   </section>
 
   <section class="section">
     <div class="section-head">
-      <span class="eyebrow">Cross-lab comparison</span>
-      <h2>Four labs, four different artifact types</h2>
+      <span class="eyebrow">Side by side</span>
+      <h2>Four labs, four different things published</h2>
     </div>
     <div class="table-wrap">
       <table class="lab-table">
         <thead>
           <tr>
             <th>Lab</th>
-            <th>Primary public artifact</th>
-            <th>Tier</th>
-            <th>Transparency posture</th>
+            <th>What it publishes</th>
+            <th>Layer</th>
+            <th>How it came about</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><span class="lab-dot" style="background:var(--tier1)"></span>Anthropic</td>
-            <td>Constitution + dated system-prompt changelog</td>
-            <td>1 &amp; 3</td>
-            <td>Proactive — philosophical framing, publicly versioned</td>
+            <td>A constitution, plus a dated changelog of the claude.ai prompt</td>
+            <td>1 and 3</td>
+            <td>Proactive, with a public version history</td>
           </tr>
           <tr>
             <td><span class="lab-dot" style="background:var(--tier2)"></span>OpenAI</td>
-            <td>Model Spec (128pp, root&gt;system&gt;developer&gt;user)</td>
+            <td>The Model Spec, 128 pages on whose instructions win</td>
             <td>2</td>
-            <td>Proactive — steerability / developer-control framing</td>
+            <td>Proactive, framed around developer control</td>
           </tr>
           <tr>
             <td><span class="lab-dot" style="background:#8a8677"></span>Google DeepMind</td>
-            <td>None — only developer prompting guidance (PTCF)</td>
-            <td>—</td>
-            <td>No governance-transparency artifact published</td>
+            <td>Nothing about Gemini's own rules, only prompting advice for developers</td>
+            <td>none</td>
+            <td>No governance document found</td>
           </tr>
           <tr>
             <td><span class="lab-dot" style="background:var(--tier3)"></span>xAI</td>
-            <td>Raw deployed prompts on GitHub (per-surface)</td>
+            <td>Raw deployed prompts on GitHub, one per surface</td>
             <td>3</td>
-            <td>Reactive — triggered by a 2025 incident, trust-repair framing</td>
+            <td>After a 2025 incident, to rebuild trust</td>
           </tr>
         </tbody>
       </table>
     </div>
+    <p class="table-note">"Layer" is the kind of document. The Tier 1, 2 and 3 grades in the paper are a separate thing: how far a source can be trusted.</p>
   </section>
 
   <section class="section">
     <div class="section-head">
-      <span class="eyebrow">Corpus</span>
-      <h2>A look at the coded dataset</h2>
+      <span class="eyebrow">The data</span>
+      <h2>A peek at the coded corpus</h2>
     </div>
     <div class="table-wrap">
       <table class="data-table">
@@ -334,7 +330,7 @@
             <td>Claude (mainline)</td>
             <td>1</td>
             <td>official training-time constitution</td>
-            <td>reasoning-based, priority order</td>
+            <td>reasoning-based, with a priority order</td>
           </tr>
           <tr>
             <td>Anthropic</td>
@@ -348,98 +344,95 @@
             <td>Grok (all contexts)</td>
             <td>1</td>
             <td>official raw prompts on GitHub</td>
-            <td>minimal, minors-content only</td>
+            <td>minimal; minors-content ban is the hard line</td>
           </tr>
           <tr>
             <td>Coding-agent aggregate</td>
             <td>25+ products</td>
             <td>2</td>
-            <td>long-running aggregation repo (141k★)</td>
+            <td>long-running aggregation repo (141k stars)</td>
             <td>varies, generally lighter</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <p class="table-note">6 rows × 13 coding axes in the full corpus — <a href="data/dataset.csv">download dataset.csv</a> for the complete table.</p>
+    <p class="table-note">Showing 5 of 6 rows. The full file has 13 columns, including seven coded axes. Here <code>tier</code> grades the source (1 means the lab published it itself); it has nothing to do with the three layers. <a href="data/dataset.csv">Download dataset.csv</a>.</p>
   </section>
 
   <section class="section">
     <div class="section-head">
-      <span class="eyebrow">Open questions</span>
-      <h2>What this study doesn't answer yet</h2>
+      <span class="eyebrow">Still open</span>
+      <h2>What this doesn't settle</h2>
     </div>
     <div class="findings">
       <div class="finding">
         <div class="num">→</div>
-        <h3>Inter-rater reliability</h3>
-        <p>Coding was single-coder. A second independent coder scoring the same corpus is the most direct way to strengthen every claim in this paper.</p>
+        <h3>A second coder</h3>
+        <p>I coded everything myself. A second person scoring the same documents is the quickest way to find out how much of this is judgment.</p>
       </div>
       <div class="finding">
         <div class="num">→</div>
-        <h3>Longitudinal data for other labs</h3>
-        <p>Anthropic is the only lab with verifiable dated revision history. Whether OpenAI, Google, and xAI's documents are similarly "living" is currently unknown, not disputed.</p>
+        <h3>The other labs over time</h3>
+        <p>Only Anthropic has a dated revision record. Whether OpenAI, Google and xAI update their documents as often is unknown, not denied.</p>
       </div>
       <div class="finding">
         <div class="num">→</div>
-        <h3>Causal claim on coding agents</h3>
-        <p>The pattern — coding agents de-emphasize safety framing because it lives at the training layer — is an interpretation consistent with the data, not a tested causal mechanism.</p>
+        <h3>Why coding agents differ</h3>
+        <p>My explanation is that safety already lives in the model. It fits the data. I haven't tested it against a case that could prove it wrong.</p>
       </div>
       <div class="finding">
         <div class="num">→</div>
-        <h3>Google's silence, unexplained</h3>
-        <p>Whether Google's lack of a public governance artifact reflects a deliberate policy choice or simply a different publication strategy is outside what this corpus can determine.</p>
+        <h3>Google's silence</h3>
+        <p>I can see that Google hasn't published a governance document. I can't tell whether that's a choice or just a different way of doing things.</p>
       </div>
     </div>
   </section>
 
   <section class="section">
     <div class="section-head">
-      <span class="eyebrow">Status</span>
-      <h2>Independently reviewed, arXiv-ready</h2>
+      <span class="eyebrow">Where it stands</span>
+      <h2>A preprint, self-reviewed, not peer reviewed</h2>
     </div>
     <div class="status-strip">
-      <div class="status-item"><strong>3</strong>independent reviewer passes</div>
-      <div class="status-item"><strong>12+</strong>primary sources verified</div>
-      <div class="status-item"><strong>4</strong>labs compared</div>
-      <div class="status-item"><strong>Single-coder</strong>known limitation, disclosed openly</div>
+      <div class="status-item"><strong>3</strong>review passes, with an AI standing in for the reviewers</div>
+      <div class="status-item"><strong>14</strong>references in the paper</div>
+      <div class="status-item"><strong>4</strong>labs, plus 25+ coding agents</div>
+      <div class="status-item"><strong>1</strong>person coded the corpus</div>
     </div>
   </section>
 
   <section class="section">
     <div class="section-head">
-      <span class="eyebrow">Repository</span>
-      <h2>What's in the repo</h2>
+      <span class="eyebrow">In the repo</span>
+      <h2>What's here</h2>
     </div>
-    <div class="filetree">
-<span class="dir">paper/</span>
-  system-prompt-taxonomy-paper.pdf   <span class="comment"># compiled paper</span>
+    <div class="filetree"><span class="dir">paper/</span>
+  system-prompt-taxonomy-paper.pdf   <span class="comment"># the paper</span>
   system-prompt-taxonomy-paper.tex   <span class="comment"># LaTeX source</span>
 <span class="dir">data/</span>
-  dataset.csv                        <span class="comment"># full coded corpus</span>
+  dataset.csv                        <span class="comment"># the coded corpus</span>
 <span class="dir">docs/</span>
-  methodology.md                     <span class="comment"># tiering + coding scheme</span>
-  revision-log.md                    <span class="comment"># audit trail</span>
-  publication-readiness-report.md    <span class="comment"># 3-reviewer validation</span>
-    </div>
+  methodology.md                     <span class="comment"># how I picked, graded and coded sources</span>
+  revision-log.md                    <span class="comment"># what changed between drafts</span>
+  publication-readiness-report.md    <span class="comment"># my self-review, weak spots included</span></div>
   </section>
 
   <section class="section">
     <div class="section-head">
-      <span class="eyebrow">Cite this work</span>
+      <span class="eyebrow">Cite it</span>
       <h2>BibTeX</h2>
     </div>
-    <div class="cite-box">@misc{aman2026specstrata,<br>
-&nbsp;&nbsp;author = {Aman, Syed Abdul},<br>
-&nbsp;&nbsp;title  = {Behavioral Control Through System Prompts: A Comparative<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Structural Analysis of Public Governance Artifacts Across<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Commercial LLM Deployments},<br>
-&nbsp;&nbsp;year   = {2026},<br>
-&nbsp;&nbsp;howpublished = {\url{https://github.com/P-r-e-m-i-u-m/spec-strata}}<br>
+    <div class="cite-box">@misc{aman2026threekinds,
+  author = {Aman, Syed Abdul},
+  title  = {Three Kinds of System Prompt: Comparing What AI Labs
+            Publish About How Their Models Behave},
+  year   = {2026},
+  howpublished = {\url{https://github.com/P-r-e-m-i-u-m/spec-strata}}
 }</div>
   </section>
 
   <footer>
-    <span>Syed Abdul Aman — Independent Researcher</span>
+    <span>Syed Abdul Aman, independent researcher</span>
     <span><a href="mailto:amanbaba9404522@gmail.com">amanbaba9404522@gmail.com</a> · <a href="https://github.com/P-r-e-m-i-u-m/spec-strata">github.com/P-r-e-m-i-u-m/spec-strata</a></span>
   </footer>
 

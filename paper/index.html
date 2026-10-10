@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Behavioral Control Through System Prompts: A Comparative Structural Analysis of Public Governance Artifacts Across Commercial LLM Deployments</title>
+<title>Three Kinds of System Prompt: Comparing What AI Labs Publish About How Their Models Behave</title>
 
 <!-- Google Scholar indexing metadata -->
-<meta name="citation_title" content="Behavioral Control Through System Prompts: A Comparative Structural Analysis of Public Governance Artifacts Across Commercial LLM Deployments">
+<meta name="citation_title" content="Three Kinds of System Prompt: Comparing What AI Labs Publish About How Their Models Behave">
 <meta name="citation_author" content="Aman, Syed Abdul">
 <meta name="citation_publication_date" content="2026/07/25">
 <meta name="citation_online_date" content="2026/07/25">
@@ -16,8 +16,9 @@
 <meta name="citation_keywords" content="large language models; system prompts; AI governance; AI safety; taxonomy; prompt engineering">
 <meta name="citation_technical_report_institution" content="Independent Researcher">
 
-<meta name="description" content="A three-part taxonomy of behavioral-control artifacts — training-time constitutions, runtime authority specifications, and deployed system prompts — with a credibility-tiered comparative analysis across Anthropic, OpenAI, Google DeepMind, and xAI.">
+<meta name="description" content="AI labs publish three different kinds of documents about how their models should behave. This paper separates them and compares Anthropic, OpenAI, Google DeepMind and xAI, plus 25+ coding agents.">
 <link rel="canonical" href="https://p-r-e-m-i-u-m.github.io/spec-strata/paper/">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -31,8 +32,8 @@
   a{color:var(--tier2);}
   .back{font-family:var(--mono); font-size:13px; color:var(--ink-soft); text-decoration:none; display:inline-block; margin-bottom:36px;}
   .venue{font-family:var(--mono); font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--tier2); margin-bottom:16px;}
-  h1{font-family:var(--display); font-weight:600; font-size:30px; line-height:1.25; letter-spacing:-0.01em; margin-bottom:20px;}
-  .authors{font-family:var(--body); font-size:16px; color:var(--ink-soft); margin-bottom:6px;}
+  h1{font-family:var(--display); font-weight:600; font-size:32px; line-height:1.2; letter-spacing:-0.01em; margin-bottom:20px;}
+  .authors{font-size:16px; color:var(--ink-soft); margin-bottom:6px;}
   .affil{font-family:var(--mono); font-size:13px; color:var(--ink-soft); margin-bottom:32px;}
   .meta-row{display:flex; gap:24px; flex-wrap:wrap; font-family:var(--mono); font-size:13px; color:var(--ink-soft); margin-bottom:36px; padding-bottom:28px; border-bottom:1px solid var(--line);}
   h2{font-family:var(--display); font-weight:600; font-size:19px; margin-bottom:14px; margin-top:36px;}
@@ -48,24 +49,23 @@
 <div class="wrap">
   <a class="back" href="../">← spec-strata</a>
 
-  <div class="venue">Independent preprint · 2026</div>
-  <h1>Behavioral Control Through System Prompts: A Comparative Structural Analysis of Public Governance Artifacts Across Commercial LLM Deployments</h1>
+  <div class="venue">Preprint · not peer reviewed</div>
+  <h1>Three Kinds of System Prompt: Comparing What AI Labs Publish About How Their Models Behave</h1>
   <div class="authors">Syed Abdul Aman</div>
-  <div class="affil">Independent Researcher · amanbaba9404522@gmail.com</div>
+  <div class="affil">Independent researcher · amanbaba9404522@gmail.com</div>
 
   <div class="meta-row">
-    <span>10 pages</span>
-    <span>Published July 25, 2026</span>
-    <span>cs.CL / cs.AI</span>
+    <span>9 pages</span>
+    <span>July 2026, revised October 2026</span>
+    <span>cs.CL · cs.AI</span>
   </div>
 
   <h2>Abstract</h2>
-  <p>Large language model providers increasingly publish documents intended to govern model behavior at scale, ranging from training-time value specifications to runtime authority hierarchies to per-product deployed instructions. Despite substantial public interest in these artifacts — evidenced by prompt-collection repositories with tens of thousands of stars and an active empirical literature on prompt-extraction attacks — direct comparative content analysis of these documents' primary text remains rare.</p>
-  <p>Prior literature surveys task-oriented prompting techniques for benchmarking (which concerns user-authored prompts, not provider-authored governance), studies the security of prompt confidentiality (which concerns extraction, not content), or examines system-level instructions as an object of research and policy discourse without directly coding the primary governance documents themselves.</p>
-  <p>This paper introduces a three-part taxonomy of behavioral-control artifacts — training-time constitutions, runtime authority specifications, and deployed inference-time system prompts — and applies a credibility-tiered comparative methodology across four major labs (Anthropic, OpenAI, Google DeepMind, xAI) and a 25-plus-product corpus of coding-agent tools.</p>
-  <p>We find that labs diverge not only in the content of behavioral constraints but in which artifact type they use to express them at all; that transparency is sometimes reactive (incident-driven) rather than proactive; that product category (consumer chat versus coding agent) systematically predicts which instruction categories dominate a deployed prompt; and, using a publicly verifiable 18-revision changelog spanning 23 months, that at least one lab's self-description of its governance artifact as a "living document" can be independently confirmed against dated evidence rather than taken on trust. We argue this taxonomy resolves a category error common in informal prompt-comparison work, and we outline a research agenda for treating behavioral-control artifacts as first-class objects of study in AI governance and NLP.</p>
+  <p>AI labs now publish long documents meant to shape how their models behave. Some are built into the model during training. Some set rules for whose instructions win at runtime. Some are the literal text a product sends with every conversation. People compare these as if they were one kind of thing. I argue they are three, and that mixing them up produces comparisons that don't hold up.</p>
+  <p>Prior work studies task prompts for benchmarking, attacks that extract system prompts, and how researchers and policymakers discuss system-level instructions. None of it codes the documents themselves. I read the primary documents from Anthropic, OpenAI, Google DeepMind and xAI, plus system prompts from more than 25 coding-agent products, tiered each source by how far it can be trusted, and coded each one on seven axes. Four things stood out. The labs don't publish the same kind of document. xAI committed to publishing its prompts in response to an incident. Coding agents spend their prompts on tool use and say comparatively little about content safety. And Anthropic's public changelog for its claude.ai prompt, 18 dated revisions over 23 months, shows that at least one lab's "living document" claim can be checked against a dated record.</p>
+  <p>One person coded the corpus, so I offer this as a first map to be checked and extended, not a settled result.</p>
 
-  <div class="keywords">Keywords: large language models · system prompts · AI governance · AI safety · taxonomy · prompt engineering</div>
+  <div class="keywords">Keywords: system prompts · AI governance · AI safety · taxonomy · prompt engineering</div>
 
   <div class="cta-row">
     <a class="btn btn-solid" href="system-prompt-taxonomy-paper.pdf">Download PDF</a>

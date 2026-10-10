@@ -1,87 +1,63 @@
-# Methodology — Behavioral Control Through System Prompts
+# Methodology
 
-## Research Question
-How do system prompts across commercial and open-source LLM products encode
-behavioral control, and what structural patterns, divergences, and gaps exist
-across labs and product types?
+How I chose sources, graded them, and coded them. If you want to check my work or redo it, start here.
 
-## Sub-questions
-1. What functional categories of instruction recur across labs (safety, tone,
-   tool-use, formatting, identity)?
-2. Do consumer chat assistants, coding agents, and enterprise/API-default
-   prompts differ systematically in structure or length?
-3. Has system prompt complexity (length, number of distinct instruction
-   categories) increased over time, where version history is available?
-4. What's absent — categories present in some labs' prompts but not others,
-   and what does that suggest about differing design philosophies?
+## The question
 
-## Source Tiers (credibility-graded, this matters for reviewers)
-- **Tier 1 — Official/primary**: Content labs have published themselves
-  (e.g. Anthropic's public system prompt releases, OpenAI's Model Spec,
-  xAI's published Grok prompt, official docs describing system prompt
-  structure).
-- **Tier 2 — Reconstructed/leaked, high-consensus**: Prompts appearing
-  consistently across multiple independent extraction attempts, hosted in
-  long-running, widely-cited public repos (used as secondary evidence,
-  flagged as such, never treated as ground truth).
-- **Tier 3 — Single-source leaks**: Lower confidence, used only to note
-  existence of a pattern, not as a primary data point, always caveated.
+How do labs encode behavioral control in the documents they publish, and what patterns, differences and gaps show up across labs and product types?
 
-Every entry in the dataset is tagged with its tier. The paper's limitations
-section will explicitly discuss the epistemic status of Tier 2/3 data —
-this is a strength if handled honestly, a fatal flaw if glossed over.
+## Sub-questions, and where the paper lands
 
-## Coding Scheme (applied to each system prompt in the corpus)
-Each prompt is tagged along these axes:
+1. **What kinds of instruction recur across labs** (safety, tone, tools, formatting, identity)? Coded on seven axes, below.
+2. **Do consumer chat assistants, coding agents and API defaults differ in structure?** Partly. The paper compares coding agents with consumer chat. It doesn't cover API defaults, because I found no Tier 1 material of comparable depth.
+3. **Where there's version history, how often does the document change?** Only Anthropic's claude.ai changelog has one. I report revision cadence. I did not measure whether prompts grew longer or more complex over time.
+4. **What's missing from some labs' documents that others include?** Google's gap is the clearest case. xAI's permissive content defaults are the clearest difference in substance.
 
-| Axis | What we're coding |
+## Source tiers
+
+The tiers grade how far a source can be trusted. They are separate from the three layers (training-time, runtime rulebook, deployed prompt) the paper proposes. Every row in the dataset carries one.
+
+- **Tier 1: official.** The lab published it itself. Examples: Anthropic's constitution and its claude.ai changelog, OpenAI's Model Spec, xAI's raw prompts on GitHub.
+- **Tier 2: reconstructed, high consensus.** Prompts that turn up consistently across independent extraction attempts and live in long-running, widely cited public repos. Used as supporting evidence and always labeled that way.
+- **Tier 3: single-source.** Low confidence. Used only to say a pattern might exist, never as a main data point.
+
+Tier 2 and 3 material is weaker by construction. The paper says so wherever it leans on it, because a reviewer will ask.
+
+## Coding scheme
+
+Each entry is coded on seven axes:
+
+| Axis | What I looked for |
 |---|---|
-| Identity framing | Does it name the assistant, company, model version? |
-| Safety/refusal instructions | Presence, specificity, category coverage (violence, CBRN, CSAM, self-harm, etc.) |
-| Tool-use governance | Rules for when/how to call tools, confirmation requirements |
-| Tone/persona control | Style, formatting, verbosity constraints |
-| Output format constraints | Markdown rules, citation rules, structured output |
-| Jailbreak/injection countermeasures | Explicit anti-manipulation instructions |
-| Knowledge cutoff / recency handling | Instructions for search vs. memory |
-| Length | Word/token count |
-| Update cadence | If version history available |
+| Identity framing | Does it name the assistant, the company, the model version? |
+| Safety and refusal | Is it present, how specific is it, which categories does it cover (violence, CBRN, child safety, self-harm, and so on)? |
+| Tool-use governance | Rules for when and how to call tools, and when to confirm first |
+| Tone and persona | Style, formatting and verbosity constraints |
+| Output format | Markdown rules, citation rules, structured output |
+| Injection countermeasures | Explicit instructions against manipulation |
+| Recency handling | Instructions for when to search and when to rely on memory |
 
-## Unit of Analysis
-One system prompt (or officially documented prompt family) per product per
-snapshot in time = one row in the dataset.
+Document length and revision history aren't axes. When a source gives them, they go in the `notes` column. I built the scheme from a first pass over the corpus, not in advance.
 
-## Copyright / Reproduction Policy
-No system prompt text is reproduced verbatim beyond short (<15 word) quoted
-fragments where exact wording is analytically necessary (e.g. comparing two
-labs' exact refusal phrasing). All classification is done via paraphrase and
-structural coding, not reproduction. This is both a legal requirement and
-good practice — a table of category-tags is more useful to readers than a
-copy-pasted prompt dump anyway.
+One person applied it. There's no second coder and no inter-rater number.
 
-## Planned Comparative Set (final, as used in the paper)
-- Anthropic (Claude family) — Tier 1: training-time constitution (CC0,
-  anthropic.com/constitution) AND Tier 1: officially published, versioned
-  changelog of the deployed claude.ai/mobile system prompt
-  (docs.claude.com/en/release-notes/system-prompts), covering 18 dated
-  revisions from July 2024 to June 2026 — the only lab in the corpus with
-  verifiable longitudinal deployed-prompt data
-- OpenAI (ChatGPT, Model Spec) — Tier 1 (Model Spec, CC0, 128pp)
-- Google (Gemini) — Tier 3 only; no equivalent governance document publicly
-  available as of July 2026 (developer-facing prompting guides only)
-- xAI (Grok) — Tier 1 (raw deployed prompts, github.com/xai-org/grok-prompts);
-  publication was reactive (May 2025 incident response), not proactive
-- Coding agents: Cursor, Claude Code, GitHub Copilot, Devin, Windsurf,
-  Replit, v0, and 20+ others — Tier 2 (x1xhlol/system-prompts-and-models-of-ai-tools,
-  141k+ GitHub stars, 501 commits at time of access)
-- Open-source/self-hosted defaults — considered but no Tier-1 material
-  of comparable depth found; omitted from final analysis rather than
-  padded with Tier-3 material
+## Unit of analysis
 
-## Note on the author's own repository
-The author's "LLM System Prompt Intelligence Repository" was evaluated for
-inclusion and ultimately excluded from the final analysis: it did not add
-comparative value beyond what the Tier-1/Tier-2 sources above already
-provide, and including it without that added value would have weakened
-rather than strengthened the paper's evidentiary basis. Per instruction,
-personal-repository inclusion is conditional on genuine contribution, not
-automatic.
+One row is one document, or one officially documented family of prompts, for one product at one point in time.
+
+## Quoting policy
+
+I don't reproduce system prompt text beyond short fragments (under 15 words) where the exact wording matters. Everything else is paraphrase and structural coding.
+
+## What's in the corpus
+
+- **Anthropic.** Tier 1. The training-time constitution (CC0), and the public, dated changelog of the claude.ai and mobile prompt: 18 revisions from July 2024 to June 2026. This is the only lab with that kind of record.
+- **OpenAI.** Tier 1. The Model Spec (CC0, 128 pages), 2025-09-12 revision.
+- **Google DeepMind.** Tier 3. No governance document exists publicly as of July 2026. What I found is prompting advice for developers.
+- **xAI.** Tier 1. Raw deployed prompts at github.com/xai-org/grok-prompts. Publication followed the May 2025 incident.
+- **Coding agents.** Tier 2. Cursor, Claude Code, GitHub Copilot, Devin, Windsurf, Replit, v0 and 20+ others, all from x1xhlol/system-prompts-and-models-of-ai-tools (141k+ stars, 501 commits when I looked).
+- **Open-source and self-hosted defaults.** Considered and left out. I found nothing at Tier 1 with comparable depth, and padding with Tier 3 would have weakened the rest.
+
+## About my own repo
+
+I also have a repo of system prompts I collected. I looked at it and left it out. It didn't add anything the Tier 1 and Tier 2 sources didn't already cover, and including it just to include it would have made the evidence look better than it is.

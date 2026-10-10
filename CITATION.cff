@@ -1,19 +1,19 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
-title: "Behavioral Control Through System Prompts: A Comparative Structural Analysis of Public Governance Artifacts Across Commercial LLM Deployments"
+title: "Three Kinds of System Prompt: Comparing What AI Labs Publish About How Their Models Behave"
+abstract: "AI labs publish long documents meant to shape model behavior. Some are built in during training, some set rules for whose instructions win at runtime, and some are the text a product sends with every conversation. This paper argues they are three different kinds of artifact, and compares what Anthropic, OpenAI, Google DeepMind and xAI publish, plus 25+ coding-agent products, with each source graded by how far it can be trusted."
 authors:
   - family-names: Aman
     given-names: "Syed Abdul"
     email: amanbaba9404522@gmail.com
-    orcid: "https://orcid.org/0000-0000-0000-0000"  # replace once registered at orcid.org
-date-released: 2026-07-25
-url: "https://github.com/P-r-e-m-i-u-m/spec-strata"
+date-released: 2026-10-10
+url: "https://p-r-e-m-i-u-m.github.io/spec-strata/"
 repository-code: "https://github.com/P-r-e-m-i-u-m/spec-strata"
 license: MIT
 keywords:
-  - large-language-models
-  - system-prompts
-  - ai-safety
-  - ai-governance
+  - large language models
+  - system prompts
+  - AI governance
+  - AI safety
   - taxonomy
-  - prompt-engineering
+  - prompt engineering

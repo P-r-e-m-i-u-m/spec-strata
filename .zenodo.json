@@ -1,6 +1,6 @@
 {
-  "title": "spec-strata: Behavioral Control Through System Prompts — A Comparative Structural Analysis of Public Governance Artifacts Across Commercial LLM Deployments",
-  "description": "A three-part taxonomy of behavioral-control artifacts governing LLM behavior — training-time constitutions, runtime authority specifications, and deployed system prompts — with a credibility-tiered comparative analysis across Anthropic, OpenAI, Google DeepMind, and xAI.",
+  "title": "Three Kinds of System Prompt: Comparing What AI Labs Publish About How Their Models Behave",
+  "description": "AI labs publish long documents meant to shape model behavior. Some are built in during training, some set rules for whose instructions win at runtime, and some are the text a product sends with every conversation. This paper argues they are three different kinds of artifact, and compares what Anthropic, OpenAI, Google DeepMind and xAI publish, plus 25+ coding-agent products, with each source graded by how far it can be trusted.",
   "creators": [
     {
       "name": "Aman, Syed Abdul",
